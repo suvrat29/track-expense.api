@@ -1,0 +1,15 @@
+CREATE TABLE public.applicationlog
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    type character varying(100) NOT NULL,
+    page character varying NOT NULL,
+    function character varying NOT NULL,
+    message character varying NOT NULL,
+    stacktrace character varying NOT NULL,
+    userid bigint NOT NULL,
+    logdate date NOT NULL,
+    CONSTRAINT "PK_applicationlog" PRIMARY KEY (id)
+);
+
+ALTER TABLE public.applicationlog
+    OWNER to postgres;
