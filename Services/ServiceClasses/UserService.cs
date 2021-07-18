@@ -188,11 +188,11 @@ namespace track_expense.api.Services.ServiceClasses
             }
         }
 
-        public async Task<(bool, string)> userForgotPasswordAsync(string email)
+        public async Task<(bool, string)> userForgotPasswordAsync(UserForgotPasswordVM forgotPasswordData)
         {
             try
             {
-                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(email);
+                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(forgotPasswordData.email);
                 string resetkey = "";
 
                 if (_user != null)
@@ -229,7 +229,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                 await _userModel.UpdateUserDetailsAsync(_user);
 
-                                await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], email, "TrackExpense Forgot Password", _emailTemplate.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
+                                await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], forgotPasswordData.email, "TrackExpense Forgot Password", _emailTemplate.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(forgotPasswordData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
 
                                 return (true, "Email sent");
                             }
@@ -246,11 +246,11 @@ namespace track_expense.api.Services.ServiceClasses
             }
         }
 
-        public async Task<bool> userResetPasswordAsync(string email, string resetKey, string password)
+        public async Task<bool> userResetPasswordAsync(UserResetPasswordVM resetPasswordData)
         {
             try
             {
-                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(Encoding.UTF8.GetString(Convert.FromBase64String(email)));
+                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(Encoding.UTF8.GetString(Convert.FromBase64String(resetPasswordData.email)));
 
                 if (_user != null)
                 {
@@ -266,7 +266,7 @@ namespace track_expense.api.Services.ServiceClasses
                                 return false;
                             else
                             {
-                                if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(resetKey)))
+                                if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(resetPasswordData.resetkey)))
                                 {
                                     (byte[], byte[]) passwordData;
                                     string _emailTemplate = "";
@@ -276,7 +276,7 @@ namespace track_expense.api.Services.ServiceClasses
                                         _emailTemplate = await sr.ReadToEndAsync();
                                     }
 
-                                    passwordData = CommonUtils.GenerateUserPassword(password);
+                                    passwordData = CommonUtils.GenerateUserPassword(resetPasswordData.password);
                                     _user.passwordHash = passwordData.Item1;
                                     _user.passwordSalt = passwordData.Item2;
                                     _user.resetkey = "";

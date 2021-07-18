@@ -88,11 +88,11 @@ namespace track_expense.api.Controllers
 
         [AllowAnonymous]
         [HttpPost("forgotpassword")]
-        public async Task<IActionResult> UserForgotPasswordAsync([FromForm] string email)
+        public async Task<IActionResult> UserForgotPasswordAsync(UserForgotPasswordVM forgotPasswordData)
         {
             try
             {
-                (bool, string) ForgotPasswordResult = await _userService.userForgotPasswordAsync(email);
+                (bool, string) ForgotPasswordResult = await _userService.userForgotPasswordAsync(forgotPasswordData);
 
                 if (ForgotPasswordResult.Item1)
                     return Ok(ForgotPasswordResult.Item2);
@@ -108,11 +108,11 @@ namespace track_expense.api.Controllers
 
         [AllowAnonymous]
         [HttpPost("resetpassword")]
-        public async Task<IActionResult> UserResetPasswordAsync([FromForm] string email, [FromForm] string resetKey, [FromForm] string password)
+        public async Task<IActionResult> UserResetPasswordAsync(UserResetPasswordVM resetPasswordData)
         {
             try
             {
-                return Ok(await _userService.userResetPasswordAsync(email, resetKey, password));
+                return Ok(await _userService.userResetPasswordAsync(resetPasswordData));
             }
             catch (Exception ex)
             {

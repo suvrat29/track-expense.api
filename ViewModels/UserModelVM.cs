@@ -50,4 +50,16 @@ namespace track_expense.api.ViewModels
         public string email { get; set; }
         public string resetkey { get; set; }
     }
+
+    public class UserForgotPasswordVM
+    {
+        public string email { get; set; }
+    }
+
+    public class UserResetPasswordVM
+    {
+        public string email { get; set; }
+        public string resetkey { get; set; }
+        public string password { get; set; }
+    }
 }
