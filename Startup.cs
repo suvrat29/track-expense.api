@@ -32,6 +32,7 @@ namespace track_expense.api
             services.AddControllers();
             //enable in-memory cache
             services.AddMemoryCache();
+            services.AddHttpContextAccessor();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "track_expense.api", Version = "v1" });
@@ -51,7 +52,7 @@ namespace track_expense.api
             });
 
             services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql(Configuration["ConnectionString"]));
-
+            
             //Add table interfaces here
             services.AddScoped<IUserModelProvider, UserModelProvider>();
             services.AddScoped<IApplicationlogProvider, ApplicationlogProvider>();

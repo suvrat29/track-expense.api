@@ -165,7 +165,7 @@ namespace track_expense.api.Services.ServiceClasses
                                     if (CommonUtils.VerifyPasswordHash(userCredentials.password, _user.passwordHash, _user.passwordSalt))
                                     {
                                         //Set logged in user's detail in cache
-                                        _memCacheService.SetValueInCache<UserModelVM>(_user.email, CacheKeyConstants.USER_CACHE_STORE, _user);
+                                        _memCacheService.SetValueInCache<UserLoginResponse>(_user.email, CacheKeyConstants.USER_CACHE_STORE, _mapper.Map<UserLoginResponse>(_user));
 
                                         return (true, BuildUserIdentity(_user), _mapper.Map<UserLoginResponse>(_user));
                                     }
@@ -338,7 +338,7 @@ namespace track_expense.api.Services.ServiceClasses
                 SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddHours(1),
+                    Expires = DateTime.Now.AddDays(1),
                     SigningCredentials = creds
                 };
 
