@@ -92,38 +92,43 @@ namespace track_expense.api.Services.ServiceClasses
             }
         }
 
-        public async Task<bool> verifyUserAsync(string email, string resetKey)
+        public async Task<bool> verifyUserAsync(UserEmailVerifyVM verificationData)
         {
             try
             {
-                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(Encoding.UTF8.GetString(Convert.FromBase64String(email)));
+                UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(Encoding.UTF8.GetString(Convert.FromBase64String(verificationData.email)));
 
                 if (_user != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(resetKey)))
-                    {
-                        string _emailTemplate = "";
-
-                        using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL_SUCCESS)))
-                        {
-                            _emailTemplate = await sr.ReadToEndAsync();
-                        }
-
-                        _user.invited = false;
-                        _user.resetkey = "";
-                        _user.verified = true;
-                        _user.dateverified = DateTime.Now.ToUniversalTime();
-                        _user.modifiedby = _user.id;
-                        _user.datemodified = DateTime.Now.ToUniversalTime();
-
-                        await _userModel.UpdateUserDetailsAsync(_user);
-
-                        await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, "TrackExpense Account Verified", _emailTemplate);
-
-                        return true;
-                    }
+                    if (_user.verified)
+                        throw new Exception("Your account is already verified");
                     else
-                        throw new Exception("Invalid reset key");
+                    {
+                        if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(verificationData.resetkey)))
+                        {
+                            string _emailTemplate = "";
+
+                            using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL_SUCCESS)))
+                            {
+                                _emailTemplate = await sr.ReadToEndAsync();
+                            }
+
+                            _user.invited = false;
+                            _user.resetkey = "";
+                            _user.verified = true;
+                            _user.dateverified = DateTime.Now.ToUniversalTime();
+                            _user.modifiedby = _user.id;
+                            _user.datemodified = DateTime.Now.ToUniversalTime();
+
+                            await _userModel.UpdateUserDetailsAsync(_user);
+
+                            await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, "TrackExpense Account Verified", _emailTemplate);
+
+                            return true;
+                        }
+                        else
+                            throw new Exception("Invalid reset key");
+                    }
                 }
                 else
                     throw new Exception("User not found");

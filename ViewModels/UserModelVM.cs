@@ -44,4 +44,10 @@ namespace track_expense.api.ViewModels
         public string firstname { get; set; }
         public string lastname { get; set; } = "";
     }
+
+    public class UserEmailVerifyVM
+    {
+        public string email { get; set; }
+        public string resetkey { get; set; }
+    }
 }

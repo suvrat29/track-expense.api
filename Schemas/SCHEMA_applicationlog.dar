@@ -7,7 +7,7 @@ CREATE TABLE public.applicationlog
     message character varying NOT NULL,
     stacktrace character varying NOT NULL,
     userid bigint NOT NULL,
-    logdate date NOT NULL,
+    logdate timestamp without time zone NOT NULL,
     CONSTRAINT "PK_applicationlog" PRIMARY KEY (id)
 );
 

@@ -7,7 +7,7 @@ namespace track_expense.api.Services.Interfaces
     public interface IUserService
     {
         Task<bool> registerUserAsync(UserRegisterVM registrationData);
-        Task<bool> verifyUserAsync(string email, string resetKey);
+        Task<bool> verifyUserAsync(UserEmailVerifyVM verificationData);
         Task<(bool, string, UserLoginResponse)> loginUserAsync(UserLoginVM userCredentials);
         Task<(bool, string)> userForgotPasswordAsync(string email);
         Task<bool> userResetPasswordAsync(string email, string resetKey, string password);

@@ -49,11 +49,11 @@ namespace track_expense.api.Controllers
 
         [AllowAnonymous]
         [HttpPost("verify")]
-        public async Task<IActionResult> VerifyUserAsync([FromForm] string email, [FromForm] string resetkey)
+        public async Task<IActionResult> VerifyUserAsync(UserEmailVerifyVM verificationData)
         {
             try
             {
-                return Ok(await _userService.verifyUserAsync(email, resetkey));
+                return Ok(await _userService.verifyUserAsync(verificationData));
             }
             catch (Exception ex)
             {
