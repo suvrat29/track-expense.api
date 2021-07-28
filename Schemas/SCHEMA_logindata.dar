@@ -27,3 +27,9 @@ CREATE TABLE public.logindata
 
 ALTER TABLE public.logindata
     OWNER to postgres;
+	
+ALTER TABLE public.logindata
+    ADD COLUMN "region" bigint;
+
+ALTER TABLE public.logindata
+    ADD COLUMN currency bigint;

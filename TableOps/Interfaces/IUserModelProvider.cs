@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using track_expense.api.ViewModels;
+using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.TableOps.Interfaces
 {

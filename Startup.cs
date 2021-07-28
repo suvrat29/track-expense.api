@@ -56,11 +56,13 @@ namespace track_expense.api
             //Add table interfaces here
             services.AddScoped<IUserModelProvider, UserModelProvider>();
             services.AddScoped<IApplicationlogProvider, ApplicationlogProvider>();
+            services.AddScoped<ILocalesProvider, LocalesProvider>();
             //Add service interfaces here
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IApplogService, ApplogService>();
-            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMemCacheService, MemCacheService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IApplogService, ApplogService>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

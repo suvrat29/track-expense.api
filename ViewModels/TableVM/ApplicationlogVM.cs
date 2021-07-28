@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace track_expense.api.ViewModels
+namespace track_expense.api.ViewModels.TableVM
 {
     [Table("applicationlog")]
     public class ApplicationlogVM

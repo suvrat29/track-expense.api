@@ -12,7 +12,8 @@ using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
 using track_expense.api.TableOps.Interfaces;
 using track_expense.api.Utils;
-using track_expense.api.ViewModels;
+using track_expense.api.ViewModels.ControllerVM;
+using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.Services.ServiceClasses
 {
@@ -338,7 +339,7 @@ namespace track_expense.api.Services.ServiceClasses
                 SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddDays(1),
+                    Expires = DateTime.Now.AddDays(7),
                     SigningCredentials = creds
                 };
 

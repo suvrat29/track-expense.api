@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using track_expense.api.ApiResponseModels;
-using track_expense.api.ViewModels;
+using track_expense.api.ViewModels.ControllerVM;
 
 namespace track_expense.api.Services.Interfaces
 {

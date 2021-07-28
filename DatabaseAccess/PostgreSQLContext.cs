@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using track_expense.api.ViewModels;
+using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.DatabaseAccess
 {
@@ -8,6 +8,7 @@ namespace track_expense.api.DatabaseAccess
         #region TableProperties
         public DbSet<UserModelVM> user {get; set;}
         public DbSet<ApplicationlogVM> applog { get; set; }
+        public DbSet<LocalesVM> locale { get; set; }
         #endregion
 
         #region Constructor

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using track_expense.api.ApiResponseModels;
 using track_expense.api.Services.Interfaces;
-using track_expense.api.ViewModels;
+using track_expense.api.ViewModels.ControllerVM;
 
 namespace track_expense.api.Controllers
 {
