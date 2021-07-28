@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
+using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.Controllers
 {
@@ -16,14 +18,16 @@ namespace track_expense.api.Controllers
         private readonly IHttpContextAccessor _context;
         private readonly IApplogService _applogService;
         private readonly IUserProfileService _userProfileService;
+        private readonly IMemCacheService _memCacheService;
         #endregion
 
         #region Constructor
-        public UserProfileController(IApplogService applogService, IHttpContextAccessor context, IUserProfileService userProfileService) : base(context)
+        public UserProfileController(IApplogService applogService, IHttpContextAccessor context, IUserProfileService userProfileService, IMemCacheService memCacheService) : base(context)
         {
             _applogService = applogService;
             _context = context;
             _userProfileService = userProfileService;
+            _memCacheService = memCacheService;
         }
         #endregion
 
@@ -39,7 +43,7 @@ namespace track_expense.api.Controllers
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileController.cs", "GetUserProfileDataAsync()");
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileController.cs", "GetUserProfileDataAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER__CACHE_STORE));
                 throw;
             }
         }

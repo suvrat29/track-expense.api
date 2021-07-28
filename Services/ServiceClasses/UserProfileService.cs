@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
 using track_expense.api.TableOps.Interfaces;
 using track_expense.api.ViewModels.ControllerVM;
@@ -13,14 +14,16 @@ namespace track_expense.api.Services.ServiceClasses
         private readonly ILocalesProvider _locales;
         private readonly IApplogService _applogService;
         private readonly IUserModelProvider _userModel;
+        private readonly IMemCacheService _memCacheService;
         #endregion
 
         #region Constructor
-        public UserProfileService(ILocalesProvider locales, IApplogService applogService, IUserModelProvider userModel)
+        public UserProfileService(ILocalesProvider locales, IApplogService applogService, IUserModelProvider userModel, IMemCacheService memCacheService)
         {
             _locales = locales;
             _applogService = applogService;
             _userModel = userModel;
+            _memCacheService = memCacheService;
         }
         #endregion
 
@@ -50,7 +53,7 @@ namespace track_expense.api.Services.ServiceClasses
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileService.cs", "getUserProfileDataAsync()");
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileService.cs", "getUserProfileDataAsync()", _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER__CACHE_STORE));
                 throw;
             }
         }

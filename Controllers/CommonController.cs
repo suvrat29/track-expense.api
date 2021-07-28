@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using track_expense.api.ApiResponseModels;
 using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
+using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.Controllers
 {
@@ -37,11 +38,11 @@ namespace track_expense.api.Controllers
         {
             try
             {
-                return Ok(_memCacheService.GetValueFromCache<UserLoginResponse>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                return Ok(_memCacheService.GetValueFromCache<UserLoginResponse>(base._userName, CacheKeyConstants.USER_LOGIN_CACHE_STORE));
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "CommonController.cs", "getLoggedInUserDetails()");
+                await _applogService.addErrorLogAsync(ex, "Exception", "CommonController.cs", "getLoggedInUserDetails()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER__CACHE_STORE));
                 throw;
             }
         }
