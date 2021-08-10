@@ -168,7 +168,7 @@ namespace track_expense.api.Services.ServiceClasses
                                         //Set logged in user's detail in cache
                                         _memCacheService.SetValueInCache<UserLoginResponse>(_user.email, CacheKeyConstants.USER_LOGIN_CACHE_STORE, _mapper.Map<UserLoginResponse>(_user));
 
-                                        _memCacheService.SetValueInCache<UserModelVM>(_user.email, CacheKeyConstants.USER__CACHE_STORE, _user);
+                                        _memCacheService.SetValueInCache<UserModelVM>(_user.email, CacheKeyConstants.USER_CACHE_STORE, _user);
 
                                         return (true, BuildUserIdentity(_user), _mapper.Map<UserLoginResponse>(_user));
                                     }

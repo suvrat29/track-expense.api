@@ -43,7 +43,7 @@ namespace track_expense.api.Controllers
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileController.cs", "GetUserProfileDataAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER__CACHE_STORE));
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileController.cs", "GetUserProfileDataAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
                 throw;
             }
         }

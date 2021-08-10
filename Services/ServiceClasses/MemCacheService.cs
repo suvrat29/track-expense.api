@@ -71,6 +71,7 @@ namespace track_expense.api.Services.ServiceClasses
         {
             try
             {
+                _memCache.Remove(username + "$%$" + CacheKeyConstants.USER_LOGIN_CACHE_STORE);
                 _memCache.Remove(username + "$%$" + CacheKeyConstants.USER_CACHE_STORE);
             }
             catch (Exception ex)
