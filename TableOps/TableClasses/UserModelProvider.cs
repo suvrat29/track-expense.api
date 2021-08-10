@@ -28,7 +28,7 @@ namespace track_expense.api.TableOps.TableClasses
             _dbcontext.user.Add(userModel);
             _dbcontext.SaveChanges();
 
-            UserModelVM _user = _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").LastOrDefault();
+            UserModelVM _user = _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").OrderBy(x => x.id).LastOrDefault();
 
             if (_user == null)
                 throw new Exception("Failed to create user account");
@@ -46,7 +46,7 @@ namespace track_expense.api.TableOps.TableClasses
             await _dbcontext.user.AddAsync(userModel);
             await _dbcontext.SaveChangesAsync();
 
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").LastOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
                 throw new Exception("Failed to create user account");
@@ -163,7 +163,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> ResetKeyExistsAsync(string resetKey)
         {
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE resetkey = '{resetKey}'").LastOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE resetkey = '{resetKey}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
                 return false;
@@ -173,7 +173,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> UserAlreadyExistsAsync(string email)
         {
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
                 return false;
@@ -183,12 +183,12 @@ namespace track_expense.api.TableOps.TableClasses
 
         public UserModelVM GetUserAccountByEmail(string email)
         {
-            return _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefault();
+            return _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").OrderBy(x => x.id).LastOrDefault();
         }
 
         public async Task<UserModelVM> GetUserAccountByEmailAsync(string email)
         {
-            return await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefaultAsync();
+            return await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").OrderBy(x => x.id).LastOrDefaultAsync();
         }
 
         public bool UpdateUserProfile(UserProfileUpdateVM userProfileData, long userId)
