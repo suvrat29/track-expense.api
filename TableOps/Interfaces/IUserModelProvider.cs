@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using track_expense.api.ViewModels.ControllerVM;
 using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.TableOps.Interfaces
@@ -19,5 +20,7 @@ namespace track_expense.api.TableOps.Interfaces
         Task<bool> UserAlreadyExistsAsync(string email);
         UserModelVM GetUserAccountByEmail(string email);
         Task<UserModelVM> GetUserAccountByEmailAsync(string email);
+        bool UpdateUserProfile(UserProfileUpdateVM userProfileData, long userId);
+        Task<bool> UpdateUserProfileAsync(UserProfileUpdateVM userProfileData, long userId);
     }
 }

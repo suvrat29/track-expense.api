@@ -6,5 +6,6 @@ namespace track_expense.api.Services.Interfaces
     public interface IUserProfileService
     {
         Task<UserProfileDataVM> getUserProfileDataAsync(string username);
+        Task<bool> updateUserProfileAsync(string username, UserProfileUpdateVM profileData);
     }
 }

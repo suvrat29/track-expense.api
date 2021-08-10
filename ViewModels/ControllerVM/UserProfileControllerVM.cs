@@ -19,4 +19,13 @@ namespace track_expense.api.ViewModels.ControllerVM
         public List<LocaleRegionList> regionlist { get; set; }
         public List<LocaleCurrencyList> currencylist { get; set; }
     }
+
+    public class UserProfileUpdateVM
+    {
+        public string firstname { get; set; }
+        public string lastname { get; set; }
+        public string avatar { get; set; } = "";
+        public long region { get; set; }
+        public long currency { get; set; }
+    }
 }

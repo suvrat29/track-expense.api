@@ -5,6 +5,7 @@ using System.Linq;
 using track_expense.api.DatabaseAccess;
 using track_expense.api.TableOps.Interfaces;
 using track_expense.api.ViewModels.TableVM;
+using track_expense.api.ViewModels.ControllerVM;
 
 namespace track_expense.api.TableOps.TableClasses
 {
@@ -27,7 +28,7 @@ namespace track_expense.api.TableOps.TableClasses
             _dbcontext.user.Add(userModel);
             _dbcontext.SaveChanges();
 
-            UserModelVM _user = _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").FirstOrDefault();
+            UserModelVM _user = _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").LastOrDefault();
 
             if (_user == null)
                 throw new Exception("Failed to create user account");
@@ -45,7 +46,7 @@ namespace track_expense.api.TableOps.TableClasses
             await _dbcontext.user.AddAsync(userModel);
             await _dbcontext.SaveChangesAsync();
 
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").FirstOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").LastOrDefaultAsync();
 
             if (_user == null)
                 throw new Exception("Failed to create user account");
@@ -162,7 +163,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> ResetKeyExistsAsync(string resetKey)
         {
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE resetkey = '{resetKey}'").FirstOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE resetkey = '{resetKey}'").LastOrDefaultAsync();
 
             if (_user == null)
                 return false;
@@ -172,7 +173,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> UserAlreadyExistsAsync(string email)
         {
-            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").FirstOrDefaultAsync();
+            UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefaultAsync();
 
             if (_user == null)
                 return false;
@@ -182,12 +183,53 @@ namespace track_expense.api.TableOps.TableClasses
 
         public UserModelVM GetUserAccountByEmail(string email)
         {
-            return _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").FirstOrDefault();
+            return _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefault();
         }
 
         public async Task<UserModelVM> GetUserAccountByEmailAsync(string email)
         {
-            return await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").FirstOrDefaultAsync();
+            return await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").LastOrDefaultAsync();
+        }
+
+        public bool UpdateUserProfile(UserProfileUpdateVM userProfileData, long userId)
+        {
+            UserModelVM userData = GetUserAccountById(userId);
+
+            userData.firstname = userProfileData.firstname;
+            userData.lastname = userProfileData.lastname;
+            userData.avatar = userProfileData.avatar;
+            userData.region = userProfileData.region;
+            userData.currency = userProfileData.currency;
+            userData.modifiedby = userId;
+            userData.datemodified = DateTime.Now.ToUniversalTime();
+
+            _dbcontext.user.Update(userData);
+            _dbcontext.SaveChanges();
+
+            return true;
+        }
+
+        public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateVM userProfileData, long userId)
+        {
+            UserModelVM userData = await GetUserAccountByIdAsync(userId);
+
+            if (userData != null)
+            {
+                userData.firstname = userProfileData.firstname;
+                userData.lastname = userProfileData.lastname;
+                userData.avatar = userProfileData.avatar;
+                userData.region = userProfileData.region;
+                userData.currency = userProfileData.currency;
+                userData.modifiedby = userId;
+                userData.datemodified = DateTime.Now.ToUniversalTime();
+
+                _dbcontext.user.Update(userData);
+                await _dbcontext.SaveChangesAsync();
+
+                return true;
+            }
+            else
+                return false;
         }
         #endregion
     }

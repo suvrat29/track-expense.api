@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
+using track_expense.api.ViewModels.ControllerVM;
 using track_expense.api.ViewModels.TableVM;
 
 namespace track_expense.api.Controllers
@@ -50,6 +51,19 @@ namespace track_expense.api.Controllers
         #endregion
 
         #region POST Methods
+        [HttpPost("update-user-profile")]
+        public async Task<IActionResult> UpdateUserProfileAsync([FromForm] UserProfileUpdateVM profileData)
+        {
+            try
+            {
+                return Ok(await _userProfileService.updateUserProfileAsync(base._userName, profileData));
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileController.cs", "UpdateUserProfileAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
         #endregion
 
         #endregion

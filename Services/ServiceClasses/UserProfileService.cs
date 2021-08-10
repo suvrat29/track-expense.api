@@ -57,6 +57,29 @@ namespace track_expense.api.Services.ServiceClasses
                 throw;
             }
         }
+
+        public async Task<bool> updateUserProfileAsync(string username, UserProfileUpdateVM profileData)
+        {
+            try
+            {
+                if (await _userModel.UpdateUserProfileAsync(profileData, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id))
+                {
+                    UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(username);
+
+                    if (_user != null)
+                        _memCacheService.UpdateValueInCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE, _user);
+
+                    return true;
+                }
+                else
+                    throw new MissingMemberException("Failed to update the profile: user not be found");
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserProfileService.cs", "updateUserProfileAsync()", _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
         #endregion
     }
 }

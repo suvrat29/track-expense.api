@@ -80,6 +80,20 @@ namespace track_expense.api.Services.ServiceClasses
                 throw;
             }
         }
+
+        public void UpdateValueInCache<T>(string username, string cacheKey, T value)
+        {
+            try
+            {
+                _memCache.Remove(username + "$%$" + cacheKey);
+                _memCache.Set(username + "$%$" + cacheKey, value);
+            }
+            catch (Exception ex)
+            {
+                _applogService.addErrorLog(ex, "Exception", "MemCacheService.cs", "UpdateValueInCache()");
+                throw;
+            }
+        }
         #endregion
     }
 }
