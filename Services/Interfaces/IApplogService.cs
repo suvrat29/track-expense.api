@@ -6,9 +6,9 @@ namespace track_expense.api.Services.Interfaces
 {
     public interface IApplogService
     {
-        #nullable enable
-        Task addErrorLogAsync(Exception ex, string type, string page, string function, UserModelVM? _user = null);
-        void addErrorLog(Exception ex, string type, string page, string function, UserModelVM? _user = null);
-        #nullable disable
+        Task addErrorLogAsync(Exception ex, string type, string page, string function, UserModelVM _user);
+        Task addErrorLogAsync(Exception ex, string type, string page, string function);
+        void addErrorLog(Exception ex, string type, string page, string function, UserModelVM _user);
+        void addErrorLog(Exception ex, string type, string page, string function);
     }
 }

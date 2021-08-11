@@ -20,8 +20,7 @@ namespace track_expense.api.Services.ServiceClasses
         #endregion
 
         #region Public Methods
-        #nullable enable
-        public async Task addErrorLogAsync(Exception ex, string type, string page, string function, UserModelVM? _user = null)
+        public async Task addErrorLogAsync(Exception ex, string type, string page, string function, UserModelVM _user)
         {
             ApplicationlogVM _errorLog = new ApplicationlogVM();
             _errorLog.type = type;
@@ -29,13 +28,13 @@ namespace track_expense.api.Services.ServiceClasses
             _errorLog.function = function;
             _errorLog.message = ex.InnerException == null ? ex.Message : ex.Message + " Inner exception message: " + ex.InnerException.Message;
             _errorLog.stacktrace = ex.InnerException == null ? ex.StackTrace : ex.StackTrace + " Inner exception stacktrace: " + ex.InnerException.StackTrace;
-            _errorLog.userid = _user == null ? 0 : _user.id;
+            _errorLog.userid = _user.id;
             _errorLog.logdate = DateTime.Now.ToUniversalTime();
 
             await _appLog.logErrorAsync(_errorLog);
         }
 
-        public void addErrorLog(Exception ex, string type, string page, string function, UserModelVM? _user = null)
+        public async Task addErrorLogAsync(Exception ex, string type, string page, string function)
         {
             ApplicationlogVM _errorLog = new ApplicationlogVM();
             _errorLog.type = type;
@@ -43,12 +42,39 @@ namespace track_expense.api.Services.ServiceClasses
             _errorLog.function = function;
             _errorLog.message = ex.InnerException == null ? ex.Message : ex.Message + " Inner exception message: " + ex.InnerException.Message;
             _errorLog.stacktrace = ex.InnerException == null ? ex.StackTrace : ex.StackTrace + " Inner exception stacktrace: " + ex.InnerException.StackTrace;
-            _errorLog.userid = _user == null ? 0 : _user.id;
+            _errorLog.userid = 0;
+            _errorLog.logdate = DateTime.Now.ToUniversalTime();
+
+            await _appLog.logErrorAsync(_errorLog);
+        }
+
+        public void addErrorLog(Exception ex, string type, string page, string function, UserModelVM _user)
+        {
+            ApplicationlogVM _errorLog = new ApplicationlogVM();
+            _errorLog.type = type;
+            _errorLog.page = page;
+            _errorLog.function = function;
+            _errorLog.message = ex.InnerException == null ? ex.Message : ex.Message + " Inner exception message: " + ex.InnerException.Message;
+            _errorLog.stacktrace = ex.InnerException == null ? ex.StackTrace : ex.StackTrace + " Inner exception stacktrace: " + ex.InnerException.StackTrace;
+            _errorLog.userid = _user.id;
             _errorLog.logdate = DateTime.Now.ToUniversalTime();
 
             _appLog.logError(_errorLog);
         }
-        #nullable disable
+
+        public void addErrorLog(Exception ex, string type, string page, string function)
+        {
+            ApplicationlogVM _errorLog = new ApplicationlogVM();
+            _errorLog.type = type;
+            _errorLog.page = page;
+            _errorLog.function = function;
+            _errorLog.message = ex.InnerException == null ? ex.Message : ex.Message + " Inner exception message: " + ex.InnerException.Message;
+            _errorLog.stacktrace = ex.InnerException == null ? ex.StackTrace : ex.StackTrace + " Inner exception stacktrace: " + ex.InnerException.StackTrace;
+            _errorLog.userid = 0;
+            _errorLog.logdate = DateTime.Now.ToUniversalTime();
+
+            _appLog.logError(_errorLog);
+        }
         #endregion
     }
 }
