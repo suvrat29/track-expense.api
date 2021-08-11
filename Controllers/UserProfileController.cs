@@ -52,7 +52,7 @@ namespace track_expense.api.Controllers
 
         #region POST Methods
         [HttpPost("update-user-profile")]
-        public async Task<IActionResult> UpdateUserProfileAsync([FromForm] UserProfileUpdateVM profileData)
+        public async Task<IActionResult> UpdateUserProfileAsync(UserProfileUpdateVM profileData)
         {
             try
             {
