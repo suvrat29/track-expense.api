@@ -6,6 +6,7 @@ using track_expense.api.DatabaseAccess;
 using track_expense.api.TableOps.Interfaces;
 using track_expense.api.ViewModels.TableVM;
 using track_expense.api.ViewModels.ControllerVM;
+using track_expense.api.Extensions;
 
 namespace track_expense.api.TableOps.TableClasses
 {
@@ -32,7 +33,7 @@ namespace track_expense.api.TableOps.TableClasses
 
             if (_user == null)
             {
-                throw new Exception("Failed to create user account");
+                throw new ApiErrorResponse("Failed to create user account");
             }
             else
             {
@@ -52,7 +53,7 @@ namespace track_expense.api.TableOps.TableClasses
 
             if (_user == null)
             {
-                throw new Exception("Failed to create user account");
+                throw new ApiErrorResponse("Failed to create user account");
             }
             else
             {
@@ -97,7 +98,7 @@ namespace track_expense.api.TableOps.TableClasses
             }
             else
             {
-                throw new Exception($"No record found for userId: {userId}");
+                throw new ApiErrorResponse($"No record found for userId: {userId}");
             }
         }
 
@@ -117,7 +118,7 @@ namespace track_expense.api.TableOps.TableClasses
             }
             else
             {
-                throw new Exception($"No record found for userId: {userId}");
+                throw new ApiErrorResponse($"No record found for userId: {userId}");
             }
         }
 
@@ -137,7 +138,7 @@ namespace track_expense.api.TableOps.TableClasses
             }
             else
             {
-                throw new Exception($"No record found for userId: {userId}");
+                throw new ApiErrorResponse($"No record found for userId: {userId}");
             }
         }
 
@@ -157,7 +158,7 @@ namespace track_expense.api.TableOps.TableClasses
             }
             else
             {
-                throw new Exception($"No record found for userId: {userId}");
+                throw new ApiErrorResponse($"No record found for userId: {userId}");
             }
         }
         #endregion

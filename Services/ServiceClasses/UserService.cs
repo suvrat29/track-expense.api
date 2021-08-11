@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using track_expense.api.ApiResponseModels;
 using track_expense.api.Enums;
+using track_expense.api.Extensions;
 using track_expense.api.Services.Interfaces;
 using track_expense.api.TableOps.Interfaces;
 using track_expense.api.Utils;
@@ -85,7 +86,7 @@ namespace track_expense.api.Services.ServiceClasses
                 }
                 else
                 {
-                    throw new Exception("The user already exists");
+                    throw new ApiErrorResponse("The user already exists");
                 }
             }
             catch (Exception ex)
@@ -105,7 +106,7 @@ namespace track_expense.api.Services.ServiceClasses
                 {
                     if (_user.verified)
                     {
-                        throw new Exception("Your account is already verified");
+                        throw new ApiErrorResponse("Your account is already verified");
                     }
                     else
                     {
@@ -115,7 +116,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                             using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL_SUCCESS)))
                             {
-                                _emailTemplate = await sr.ReadToEndAsync();
+                                _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
                             }
 
                             _user.invited = false;
@@ -133,13 +134,13 @@ namespace track_expense.api.Services.ServiceClasses
                         }
                         else
                         {
-                            throw new Exception("Invalid reset key");
+                            throw new ApiErrorResponse("Invalid reset key");
                         }
                     }
                 }
                 else
                 {
-                    throw new Exception("User not found");
+                    throw new ApiErrorResponse("User not found");
                 }
             }
             catch (Exception ex)

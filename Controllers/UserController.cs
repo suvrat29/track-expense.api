@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using track_expense.api.ApiResponseModels;
+using track_expense.api.Extensions;
 using track_expense.api.Services.Interfaces;
 using track_expense.api.ViewModels.ControllerVM;
 
@@ -80,7 +81,7 @@ namespace track_expense.api.Controllers
                 }
                 else
                 {
-                    throw new Exception(AuthenticationResult.Item2);
+                    throw new ApiErrorResponse("Invalid Username/Password");
                 }
             }
             catch (Exception ex)
@@ -104,7 +105,7 @@ namespace track_expense.api.Controllers
                 }
                 else
                 {
-                    throw new Exception(ForgotPasswordResult.Item2);
+                    throw new ApiErrorResponse("Failed to perform forgot password action");
                 }
             }
             catch (Exception ex)
