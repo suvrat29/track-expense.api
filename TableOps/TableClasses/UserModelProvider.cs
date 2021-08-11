@@ -31,7 +31,9 @@ namespace track_expense.api.TableOps.TableClasses
             UserModelVM _user = _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").OrderBy(x => x.id).LastOrDefault();
 
             if (_user == null)
+            {
                 throw new Exception("Failed to create user account");
+            }
             else
             {
                 _user.createdby = _user.id;
@@ -49,7 +51,9 @@ namespace track_expense.api.TableOps.TableClasses
             UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{userModel.email}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
+            {
                 throw new Exception("Failed to create user account");
+            }
             else
             {
                 _user.createdby = _user.id;
@@ -92,7 +96,9 @@ namespace track_expense.api.TableOps.TableClasses
                 _dbcontext.SaveChanges();
             }
             else
+            {
                 throw new Exception($"No record found for userId: {userId}");
+            }
         }
 
         public async Task DisableUserAccountAsync(long userId)
@@ -110,7 +116,9 @@ namespace track_expense.api.TableOps.TableClasses
                 await _dbcontext.SaveChangesAsync();
             }
             else
+            {
                 throw new Exception($"No record found for userId: {userId}");
+            }
         }
 
         public void DeleteUserAccount(long userId)
@@ -128,7 +136,9 @@ namespace track_expense.api.TableOps.TableClasses
                 _dbcontext.SaveChanges();
             }
             else
+            {
                 throw new Exception($"No record found for userId: {userId}");
+            }
         }
 
         public async Task DeleteUserAccountAsync(long userId)
@@ -146,7 +156,9 @@ namespace track_expense.api.TableOps.TableClasses
                 await _dbcontext.SaveChangesAsync();
             }
             else
+            {
                 throw new Exception($"No record found for userId: {userId}");
+            }
         }
         #endregion
 
@@ -166,9 +178,13 @@ namespace track_expense.api.TableOps.TableClasses
             UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE resetkey = '{resetKey}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
 
         public async Task<bool> UserAlreadyExistsAsync(string email)
@@ -176,9 +192,13 @@ namespace track_expense.api.TableOps.TableClasses
             UserModelVM _user = await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").OrderBy(x => x.id).LastOrDefaultAsync();
 
             if (_user == null)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
 
         public UserModelVM GetUserAccountByEmail(string email)
@@ -211,7 +231,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateVM userProfileData, long userId)
         {
-            UserModelVM userData = await GetUserAccountByIdAsync(userId);
+            UserModelVM userData = await GetUserAccountByIdAsync(userId).ConfigureAwait(false);
 
             if (userData != null)
             {
@@ -229,7 +249,9 @@ namespace track_expense.api.TableOps.TableClasses
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
         #endregion
     }

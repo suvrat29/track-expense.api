@@ -67,12 +67,16 @@ namespace track_expense.api.Services.ServiceClasses
                     UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(username);
 
                     if (_user != null)
+                    {
                         _memCacheService.UpdateValueInCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE, _user);
+                    }
 
                     return true;
                 }
                 else
+                {
                     throw new MissingMemberException("Failed to update the profile: user not be found");
+                }
             }
             catch (Exception ex)
             {

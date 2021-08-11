@@ -84,7 +84,9 @@ namespace track_expense.api.Services.ServiceClasses
                     return true;
                 }
                 else
+                {
                     throw new Exception("The user already exists");
+                }
             }
             catch (Exception ex)
             {
@@ -102,7 +104,9 @@ namespace track_expense.api.Services.ServiceClasses
                 if (_user != null)
                 {
                     if (_user.verified)
+                    {
                         throw new Exception("Your account is already verified");
+                    }
                     else
                     {
                         if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(verificationData.resetkey)))
@@ -128,11 +132,15 @@ namespace track_expense.api.Services.ServiceClasses
                             return true;
                         }
                         else
+                        {
                             throw new Exception("Invalid reset key");
+                        }
                     }
                 }
                 else
+                {
                     throw new Exception("User not found");
+                }
             }
             catch (Exception ex)
             {
@@ -150,15 +158,21 @@ namespace track_expense.api.Services.ServiceClasses
                 if (_user != null)
                 {
                     if (!_user.verified)
+                    {
                         return (false, "User not verified", null);
+                    }
                     else
                     {
                         if (_user.disabled)
+                        {
                             return (false, "User disabled", null);
+                        }
                         else
                         {
                             if (_user.deleted)
+                            {
                                 return (false, "User deleted", null);
+                            }
                             else
                             {
                                 if (string.IsNullOrWhiteSpace(_user.resetkey))
@@ -173,16 +187,22 @@ namespace track_expense.api.Services.ServiceClasses
                                         return (true, BuildUserIdentity(_user), _mapper.Map<UserLoginResponse>(_user));
                                     }
                                     else
+                                    {
                                         return (false, "Incorrect password", null);
+                                    }
                                 }
                                 else
+                                {
                                     return (false, "User forgot password", null);
+                                }
                             }
                         }
                     }
                 }
                 else
+                {
                     return (false, "User not found", null);
+                }
             }
             catch (Exception ex)
             {
@@ -201,15 +221,21 @@ namespace track_expense.api.Services.ServiceClasses
                 if (_user != null)
                 {
                     if (!_user.verified)
+                    {
                         return (false, "User not verified");
+                    }
                     else
                     {
                         if (_user.disabled)
+                        {
                             return (false, "User disabled");
+                        }
                         else
                         {
                             if (_user.deleted)
+                            {
                                 return (false, "User deleted");
+                            }
                             else
                             {
                                 string _emailTemplate = "";
@@ -240,7 +266,9 @@ namespace track_expense.api.Services.ServiceClasses
                     }
                 }
                 else
+                {
                     return (false, "User not found");
+                }
             }
             catch (Exception ex)
             {
@@ -258,15 +286,21 @@ namespace track_expense.api.Services.ServiceClasses
                 if (_user != null)
                 {
                     if (!_user.verified)
+                    {
                         return false;
+                    }
                     else
                     {
                         if (_user.disabled)
+                        {
                             return false;
+                        }
                         else
                         {
                             if (_user.deleted)
+                            {
                                 return false;
+                            }
                             else
                             {
                                 if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(resetPasswordData.resetkey)))
@@ -293,13 +327,17 @@ namespace track_expense.api.Services.ServiceClasses
                                     return true;
                                 }
                                 else
+                                {
                                     return false;
+                                }
                             }
                         }
                     }
                 }
                 else
+                {
                     return false;
+                }
             }
             catch (Exception ex)
             {

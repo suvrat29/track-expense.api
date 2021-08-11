@@ -71,13 +71,17 @@ namespace track_expense.api.Controllers
                 (bool, string, UserLoginResponse) AuthenticationResult = await _userService.loginUserAsync(_userCredentials);
 
                 if (AuthenticationResult.Item1)
+                {
                     return Ok(new
                     {
                         token = AuthenticationResult.Item2,
                         user = AuthenticationResult.Item3
                     });
+                }
                 else
+                {
                     throw new Exception(AuthenticationResult.Item2);
+                }
             }
             catch (Exception ex)
             {
@@ -95,9 +99,13 @@ namespace track_expense.api.Controllers
                 (bool, string) ForgotPasswordResult = await _userService.userForgotPasswordAsync(forgotPasswordData);
 
                 if (ForgotPasswordResult.Item1)
+                {
                     return Ok(ForgotPasswordResult.Item2);
+                }
                 else
+                {
                     throw new Exception(ForgotPasswordResult.Item2);
+                }
             }
             catch (Exception ex)
             {

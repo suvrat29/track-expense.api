@@ -43,9 +43,13 @@ namespace track_expense.api.Services.ServiceClasses
                 itemExists = _memCache.TryGetValue(username + "$%$" + cacheKey, out cacheItem);
 
                 if (itemExists)
+                {
                     return (T)cacheItem;
+                }
                 else
+                {
                     return default;
+                }
             }
             catch (Exception ex)
             {

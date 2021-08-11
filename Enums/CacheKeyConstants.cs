@@ -2,7 +2,7 @@
 {
     public static class CacheKeyConstants
     {
-        public const string USER_LOGIN_CACHE_STORE = "UserData";
-        public const string USER_CACHE_STORE = "UserProfile";
+        public static readonly string USER_LOGIN_CACHE_STORE = "UserData";
+        public static readonly string USER_CACHE_STORE = "UserProfile";
     }
 }

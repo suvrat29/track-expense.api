@@ -14,7 +14,9 @@ namespace track_expense.api.Utils
             Random random = new Random();
 
             for (int i = 0; i < stringChars.Length; i++)
+            {
                 stringChars[i] = chars[random.Next(chars.Length)];
+            }
 
             return new string(stringChars);
         }
@@ -34,7 +36,10 @@ namespace track_expense.api.Utils
                 byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computedHash[i] != passwordHash[i]) return false;
+                    if (computedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
                 }
             }
 
