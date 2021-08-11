@@ -52,7 +52,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                     using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL)))
                     {
-                        _emailTemplate = await sr.ReadToEndAsync();
+                        _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
                     }
 
                     UserModelVM _userData = new UserModelVM();
@@ -243,7 +243,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                 using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_FORGOT_PASSWORD)))
                                 {
-                                    _emailTemplate = await sr.ReadToEndAsync();
+                                    _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
                                 }
 
                                 resetkey = CommonUtils.generateResetKey();
@@ -311,7 +311,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                     using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_RESET_PASSWORD_SUCCESS)))
                                     {
-                                        _emailTemplate = await sr.ReadToEndAsync();
+                                        _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
                                     }
 
                                     passwordData = CommonUtils.GenerateUserPassword(resetPasswordData.password);
