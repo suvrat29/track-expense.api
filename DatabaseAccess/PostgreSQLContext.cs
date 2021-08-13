@@ -9,6 +9,7 @@ namespace track_expense.api.DatabaseAccess
         public DbSet<UserModelVM> user {get; set;}
         public DbSet<ApplicationlogVM> applog { get; set; }
         public DbSet<LocalesVM> locale { get; set; }
+        public DbSet<EmaildataVM> emaildata { get; set; }
         #endregion
 
         #region Constructor

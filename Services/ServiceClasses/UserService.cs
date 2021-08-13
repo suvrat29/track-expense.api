@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +21,7 @@ namespace track_expense.api.Services.ServiceClasses
     {
         #region Variables
         private readonly IUserModelProvider _userModel;
+        private readonly IEmaildataProvider _emailData;
         private readonly IApplogService _applogService;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
@@ -30,9 +30,10 @@ namespace track_expense.api.Services.ServiceClasses
         #endregion
 
         #region Constructor
-        public UserService(IUserModelProvider userModel, IApplogService applogService, IEmailService emailService, IConfiguration configuration, IMemCacheService memCacheService, IMapper mapper)
+        public UserService(IUserModelProvider userModel, IEmaildataProvider emailData, IApplogService applogService, IEmailService emailService, IConfiguration configuration, IMemCacheService memCacheService, IMapper mapper)
         {
             _userModel = userModel;
+            _emailData = emailData;
             _applogService = applogService;
             _emailService = emailService;
             _configuration = configuration;
@@ -48,12 +49,7 @@ namespace track_expense.api.Services.ServiceClasses
             {
                 if (!await _userModel.UserAlreadyExistsAsync(registrationData.email))
                 {
-                    string _emailTemplate = "";
-
-                    using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL)))
-                    {
-                        _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
-                    }
+                    EmaildataVM _emailTemplate = await _emailData.getEmailTemplateAsync(EmailTemplateKeys.USER_VERIFY_EMAIL).ConfigureAwait(false);
 
                     UserModelVM _userData = new UserModelVM();
                     string resetkey = "";
@@ -80,7 +76,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                     await _userModel.CreateUserAccountAsync(_userData);
 
-                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], registrationData.email, "TrackExpense Account Verification", _emailTemplate.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(registrationData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_userData.resetkey))));
+                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], registrationData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(registrationData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_userData.resetkey))));
 
                     return true;
                 }
@@ -112,13 +108,8 @@ namespace track_expense.api.Services.ServiceClasses
                     {
                         if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(verificationData.resetkey)))
                         {
-                            string _emailTemplate = "";
-
-                            using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_VERIFY_EMAIL_SUCCESS)))
-                            {
-                                _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
-                            }
-
+                            EmaildataVM _emailTemplate = await _emailData.getEmailTemplateAsync(EmailTemplateKeys.USER_VERIFY_EMAIL_SUCCESS).ConfigureAwait(false);
+                            
                             _user.invited = false;
                             _user.resetkey = "";
                             _user.verified = true;
@@ -128,7 +119,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                             await _userModel.UpdateUserDetailsAsync(_user);
 
-                            await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, "TrackExpense Account Verified", _emailTemplate);
+                            await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, _emailTemplate.subject, _emailTemplate.body);
 
                             return true;
                         }
@@ -239,12 +230,7 @@ namespace track_expense.api.Services.ServiceClasses
                             }
                             else
                             {
-                                string _emailTemplate = "";
-
-                                using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_FORGOT_PASSWORD)))
-                                {
-                                    _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
-                                }
+                                EmaildataVM _emailTemplate = await _emailData.getEmailTemplateAsync(EmailTemplateKeys.USER_FORGOT_PASSWORD).ConfigureAwait(false);
 
                                 resetkey = CommonUtils.generateResetKey();
                                 while (await _userModel.ResetKeyExistsAsync(resetkey))
@@ -259,7 +245,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                 await _userModel.UpdateUserDetailsAsync(_user);
 
-                                await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], forgotPasswordData.email, "TrackExpense Forgot Password", _emailTemplate.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(forgotPasswordData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
+                                await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], forgotPasswordData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(forgotPasswordData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
 
                                 return (true, "Email sent");
                             }
@@ -307,12 +293,7 @@ namespace track_expense.api.Services.ServiceClasses
                                 if (!string.IsNullOrWhiteSpace(_user.resetkey) && _user.resetkey == Encoding.UTF8.GetString(Convert.FromBase64String(resetPasswordData.resetkey)))
                                 {
                                     (byte[], byte[]) passwordData;
-                                    string _emailTemplate = "";
-
-                                    using (StreamReader sr = new StreamReader(Path.GetFullPath(EmailTemplateKeys.TEMPLATES_BASE_PATH + EmailTemplateKeys.USER_RESET_PASSWORD_SUCCESS)))
-                                    {
-                                        _emailTemplate = await sr.ReadToEndAsync().ConfigureAwait(false);
-                                    }
+                                    EmaildataVM _emailTemplate = await _emailData.getEmailTemplateAsync(EmailTemplateKeys.USER_RESET_PASSWORD_SUCCESS).ConfigureAwait(false);
 
                                     passwordData = CommonUtils.GenerateUserPassword(resetPasswordData.password);
                                     _user.passwordHash = passwordData.Item1;
@@ -323,7 +304,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                     await _userModel.UpdateUserDetailsAsync(_user);
 
-                                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, "TrackExpense Password Updated", _emailTemplate);
+                                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, _emailTemplate.subject, _emailTemplate.body);
 
                                     return true;
                                 }
