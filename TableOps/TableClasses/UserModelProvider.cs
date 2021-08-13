@@ -23,7 +23,7 @@ namespace track_expense.api.TableOps.TableClasses
         }
         #endregion
 
-        #region CRUD Operations
+        #region CUD Operations
         public void CreateUserAccount(UserModelVM userModel)
         {
             _dbcontext.user.Add(userModel);

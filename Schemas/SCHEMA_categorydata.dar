@@ -1,0 +1,18 @@
+CREATE TABLE public.categorydata
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    name character varying NOT NULL,
+    type smallint NOT NULL,
+    icon character varying,
+    description character varying,
+    inactive boolean DEFAULT false,
+    deleted boolean DEFAULT false,
+    createdby bigint,
+    datecreated timestamp without time zone,
+    modifiedby bigint,
+    datemodified timestamp without time zone,
+    CONSTRAINT "PK_categorydata" PRIMARY KEY (id)
+);
+
+ALTER TABLE public.categorydata
+    OWNER to postgres;
