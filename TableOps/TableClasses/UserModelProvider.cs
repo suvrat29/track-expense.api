@@ -161,6 +161,49 @@ namespace track_expense.api.TableOps.TableClasses
                 throw new ApiErrorResponse($"No record found for userId: {userId}");
             }
         }
+
+        public bool UpdateUserProfile(UserProfileUpdateVM userProfileData, long userId)
+        {
+            UserModelVM userData = GetUserAccountById(userId);
+
+            userData.firstname = userProfileData.firstname;
+            userData.lastname = userProfileData.lastname;
+            userData.avatar = userProfileData.avatar;
+            userData.region = userProfileData.region;
+            userData.currency = userProfileData.currency;
+            userData.modifiedby = userId;
+            userData.datemodified = DateTime.Now.ToUniversalTime();
+
+            _dbcontext.user.Update(userData);
+            _dbcontext.SaveChanges();
+
+            return true;
+        }
+
+        public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateVM userProfileData, long userId)
+        {
+            UserModelVM userData = await GetUserAccountByIdAsync(userId).ConfigureAwait(false);
+
+            if (userData != null)
+            {
+                userData.firstname = userProfileData.firstname;
+                userData.lastname = userProfileData.lastname;
+                userData.avatar = userProfileData.avatar;
+                userData.region = userProfileData.region;
+                userData.currency = userProfileData.currency;
+                userData.modifiedby = userId;
+                userData.datemodified = DateTime.Now.ToUniversalTime();
+
+                _dbcontext.user.Update(userData);
+                await _dbcontext.SaveChangesAsync();
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Fetch Operations
@@ -210,49 +253,6 @@ namespace track_expense.api.TableOps.TableClasses
         public async Task<UserModelVM> GetUserAccountByEmailAsync(string email)
         {
             return await _dbcontext.user.FromSqlRaw($"SELECT * FROM logindata WHERE email = '{email}'").OrderBy(x => x.id).LastOrDefaultAsync();
-        }
-
-        public bool UpdateUserProfile(UserProfileUpdateVM userProfileData, long userId)
-        {
-            UserModelVM userData = GetUserAccountById(userId);
-
-            userData.firstname = userProfileData.firstname;
-            userData.lastname = userProfileData.lastname;
-            userData.avatar = userProfileData.avatar;
-            userData.region = userProfileData.region;
-            userData.currency = userProfileData.currency;
-            userData.modifiedby = userId;
-            userData.datemodified = DateTime.Now.ToUniversalTime();
-
-            _dbcontext.user.Update(userData);
-            _dbcontext.SaveChanges();
-
-            return true;
-        }
-
-        public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateVM userProfileData, long userId)
-        {
-            UserModelVM userData = await GetUserAccountByIdAsync(userId).ConfigureAwait(false);
-
-            if (userData != null)
-            {
-                userData.firstname = userProfileData.firstname;
-                userData.lastname = userProfileData.lastname;
-                userData.avatar = userProfileData.avatar;
-                userData.region = userProfileData.region;
-                userData.currency = userProfileData.currency;
-                userData.modifiedby = userId;
-                userData.datemodified = DateTime.Now.ToUniversalTime();
-
-                _dbcontext.user.Update(userData);
-                await _dbcontext.SaveChangesAsync();
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
         #endregion
     }
