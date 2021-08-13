@@ -57,6 +57,7 @@ namespace track_expense.api
             services.AddScoped<IUserModelProvider, UserModelProvider>();
             services.AddScoped<IApplicationlogProvider, ApplicationlogProvider>();
             services.AddScoped<ILocalesProvider, LocalesProvider>();
+            services.AddScoped<IEmaildataProvider, EmaildataProvider>();
             //Add service interfaces here
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMemCacheService, MemCacheService>();
