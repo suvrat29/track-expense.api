@@ -13,6 +13,7 @@ using track_expense.api.TableOps.TableClasses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System;
 
 namespace track_expense.api
 {
@@ -28,6 +29,16 @@ namespace track_expense.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Build connectionstring for heroku postgres
+            string connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            // parse the connection string
+            var databaseUri = new Uri(connectionUrl);
+
+            string db = databaseUri.LocalPath.TrimStart('/');
+            string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            /////////////////////////////////////////////////
+            
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             //enable in-memory cache
@@ -44,14 +55,13 @@ namespace track_expense.api
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                        .GetBytes(Configuration["AuthSettings:Token"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("APP_TOKEN"))),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
             });
 
-            services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql(Configuration["ConnectionString"]));
+            services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql($"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};Port={databaseUri.Port};Database={db};Pooling=true;SSL Mode=Require;Trust Server Certificate=True;"));
             
             //Add table interfaces here
             services.AddScoped<IUserModelProvider, UserModelProvider>();

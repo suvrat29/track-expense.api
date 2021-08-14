@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
 using track_expense.api.Services.Interfaces;
@@ -12,14 +11,12 @@ namespace track_expense.api.Services.ServiceClasses
     public class EmailService : IEmailService
     {
         #region Variables
-        private readonly IConfiguration _configuration;
         private readonly IApplogService _applogService;
         #endregion
 
         #region Constructor
-        public EmailService(IConfiguration configuration , IApplogService applogService)
+        public EmailService(IApplogService applogService)
         {
-            _configuration = configuration;
             _applogService = applogService;
         }
         #endregion
@@ -39,8 +36,8 @@ namespace track_expense.api.Services.ServiceClasses
                 //send mail
                 using (SmtpClient smtp = new SmtpClient())
                 {
-                    await smtp.ConnectAsync(_configuration["EmailSettings:SMTPHost"], Convert.ToInt16(_configuration["EmailSettings:SMTPPort"]), SecureSocketOptions.StartTls);
-                    await smtp.AuthenticateAsync(_configuration["EmailSettings:SMTPUser"], _configuration["EmailSettings:SMTPPass"]);
+                    await smtp.ConnectAsync(Environment.GetEnvironmentVariable("APP_SMTPHOST"), Convert.ToInt16(Environment.GetEnvironmentVariable("APP_SMTPPORT")), SecureSocketOptions.StartTls);
+                    await smtp.AuthenticateAsync(Environment.GetEnvironmentVariable("APP_SMTPUSER"), Environment.GetEnvironmentVariable("APP_SMTPPASS"));
                     await smtp.SendAsync(_mail);
                     await smtp.DisconnectAsync(true);
                 }

@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using track_expense.api.ApiResponseModels;
 using track_expense.api.Enums;
@@ -24,19 +23,17 @@ namespace track_expense.api.Services.ServiceClasses
         private readonly IEmaildataProvider _emailData;
         private readonly IApplogService _applogService;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
         private readonly IMemCacheService _memCacheService;
         private readonly IMapper _mapper;
         #endregion
 
         #region Constructor
-        public UserService(IUserModelProvider userModel, IEmaildataProvider emailData, IApplogService applogService, IEmailService emailService, IConfiguration configuration, IMemCacheService memCacheService, IMapper mapper)
+        public UserService(IUserModelProvider userModel, IEmaildataProvider emailData, IApplogService applogService, IEmailService emailService, IMemCacheService memCacheService, IMapper mapper)
         {
             _userModel = userModel;
             _emailData = emailData;
             _applogService = applogService;
             _emailService = emailService;
-            _configuration = configuration;
             _memCacheService = memCacheService;
             _mapper = mapper;
         }
@@ -76,7 +73,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                     await _userModel.CreateUserAccountAsync(_userData);
 
-                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], registrationData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(registrationData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_userData.resetkey))));
+                    await _emailService.SendEmailAsync(Environment.GetEnvironmentVariable("APP_SENDEREMAIL"), registrationData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(registrationData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_userData.resetkey))));
 
                     return true;
                 }
@@ -119,7 +116,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                             await _userModel.UpdateUserDetailsAsync(_user);
 
-                            await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, _emailTemplate.subject, _emailTemplate.body);
+                            await _emailService.SendEmailAsync(Environment.GetEnvironmentVariable("APP_SENDEREMAIL"), _user.email, _emailTemplate.subject, _emailTemplate.body);
 
                             return true;
                         }
@@ -245,7 +242,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                 await _userModel.UpdateUserDetailsAsync(_user);
 
-                                await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], forgotPasswordData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(forgotPasswordData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
+                                await _emailService.SendEmailAsync(Environment.GetEnvironmentVariable("APP_SENDEREMAIL"), forgotPasswordData.email, _emailTemplate.subject, _emailTemplate.body.Replace("^email^", Convert.ToBase64String(Encoding.UTF8.GetBytes(forgotPasswordData.email))).Replace("^resetkey^", Convert.ToBase64String(Encoding.UTF8.GetBytes(_user.resetkey))));
 
                                 return (true, "Email sent");
                             }
@@ -304,7 +301,7 @@ namespace track_expense.api.Services.ServiceClasses
 
                                     await _userModel.UpdateUserDetailsAsync(_user);
 
-                                    await _emailService.SendEmailAsync(_configuration["EmailSettings:SenderEmail"], _user.email, _emailTemplate.subject, _emailTemplate.body);
+                                    await _emailService.SendEmailAsync(Environment.GetEnvironmentVariable("APP_SENDEREMAIL"), _user.email, _emailTemplate.subject, _emailTemplate.body);
 
                                     return true;
                                 }
@@ -354,7 +351,7 @@ namespace track_expense.api.Services.ServiceClasses
                     new Claim(ClaimTypes.Name, _user.email)
                 };
 
-                SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthSettings:Token"]));
+                SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("APP_TOKEN")));
 
                 SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
