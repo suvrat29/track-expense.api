@@ -146,7 +146,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task DeleteCategoryAsync(long categoryId, long userId)
         {
-            CategorydataVM category = await GetCategoryByIdAsync(categoryId, userId);
+            CategorydataVM category = await GetCategoryByIdAsync(categoryId, userId).ConfigureAwait(false);
 
             if (category != null)
             {
