@@ -35,7 +35,7 @@ namespace track_expense.api.Services.ServiceClasses
             {
                 List<CategorydataVM> _categoriesList = await _categoryProvider.GetCategoryListAsync(_memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id);
 
-                return _categoriesList.OrderBy(cat => cat.name).ToList();
+                return _categoriesList.OrderBy(cat => cat.id).ToList();
             }
             catch (Exception ex)
             {
@@ -52,8 +52,8 @@ namespace track_expense.api.Services.ServiceClasses
 
                 _newCategory.name = newCategoryData.name;
                 _newCategory.type = newCategoryData.type == 0 ? CategoryDataEnum.TYPE_EXPENSE : newCategoryData.type == 1 ? CategoryDataEnum.TYPE_INCOME : throw new ApiErrorResponse("Unrecognized expense type");
-                _newCategory.icon = newCategoryData.icon;
-                _newCategory.description = newCategoryData.description;
+                _newCategory.icon = string.IsNullOrWhiteSpace(newCategoryData.icon) ? "" : newCategoryData.icon;
+                _newCategory.description = string.IsNullOrWhiteSpace(newCategoryData.description) ? "" : newCategoryData.description;
                 _newCategory.createdby = _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id;
                 _newCategory.datecreated = DateTime.Now.ToUniversalTime();
 
