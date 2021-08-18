@@ -13,8 +13,8 @@ namespace track_expense.api.ViewModels.TableVM
         public int type { get; set; }
         public string icon { get; set; }
         public string description { get; set; }
-        public bool inactive { get; set; } = false;
-        public bool deleted { get; set; } = false;
+        public bool inactive { get; set; }
+        public bool deleted { get; set; }
         public long createdby { get; set; }
         public DateTime datecreated { get; set; }
         public long modifiedby { get; set; }

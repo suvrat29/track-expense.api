@@ -65,7 +65,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task<bool> UpdateCategoryDetailsAsync(UpdateCategoryVM categoryData, long userId)
         {
-            CategorydataVM category = await GetCategoryByIdAsync(categoryData.id, userId);
+            CategorydataVM category = await GetCategoryByIdAsync(categoryData.id, userId).ConfigureAwait(false);
 
             if (category != null)
             {
@@ -108,7 +108,7 @@ namespace track_expense.api.TableOps.TableClasses
 
         public async Task InactiveCategoryAsync(long categoryId, long userId)
         {
-            CategorydataVM category = await GetCategoryByIdAsync(categoryId, userId);
+            CategorydataVM category = await GetCategoryByIdAsync(categoryId, userId).ConfigureAwait(false);
 
             if (category != null)
             {
