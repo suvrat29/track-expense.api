@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using track_expense.api.DatabaseAccess;
 using track_expense.api.Enums;
@@ -166,22 +167,51 @@ namespace track_expense.api.TableOps.TableClasses
         #region Fetch Operations
         public CategorydataVM GetCategoryById(long categoryId, long userId)
         {
-            return _dbcontext.categorydata.FromSqlRaw($"SELECT * FROM categorydata WHERE createdby = {userId} AND COALESCE(inactive, 'false') <> 'true' AND COALESCE(deleted, 'false') <> 'true' AND id = {categoryId}").OrderBy(x => x.id).LastOrDefault();
+            return _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, categoryId)).OrderBy(x => x.id).LastOrDefault();
         }
 
         public async Task<CategorydataVM> GetCategoryByIdAsync(long categoryId, long userId)
         {
-            return await _dbcontext.categorydata.FromSqlRaw($"SELECT * FROM categorydata WHERE createdby = {userId} AND COALESCE(inactive, 'false') <> 'true' AND COALESCE(deleted, 'false') <> 'true' AND id = {categoryId}").OrderBy(x => x.id).LastOrDefaultAsync();
+            return await _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, categoryId)).OrderBy(x => x.id).LastOrDefaultAsync();
         }
 
         public List<CategorydataVM> GetCategoryList(long userId)
         {
-            return _dbcontext.categorydata.FromSqlRaw($"SELECT * FROM categorydata WHERE createdby = {userId} AND COALESCE(inactive, 'false') <> 'true' AND COALESCE(deleted, 'false') <> 'true'").ToList();
+            return _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToList();
         }
 
         public async Task<List<CategorydataVM>> GetCategoryListAsync(long userId)
         {
-            return await _dbcontext.categorydata.FromSqlRaw($"SELECT * FROM categorydata WHERE createdby = {userId} AND COALESCE(inactive, 'false') <> 'true' AND COALESCE(deleted, 'false') <> 'true'").ToListAsync();
+            return await _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToListAsync();
+        }
+        #endregion
+
+        #region SQL Queries
+        private string GetCategoryListSQL(long userId, long categoryId)
+        {
+            StringBuilder _sql = new StringBuilder();
+            _sql.Append("SELECT ");
+            _sql.Append("id, ");
+            _sql.Append("name, ");
+            _sql.Append("type, ");
+            _sql.Append("COALESCE(icon, '') icon, ");
+            _sql.Append("COALESCE(description, '') description, ");
+            _sql.Append("COALESCE(inactive, 'false') inactive, ");
+            _sql.Append("COALESCE(deleted, 'false') deleted, ");
+            _sql.Append("createdby, ");
+            _sql.Append("datecreated, ");
+            _sql.Append("COALESCE(modifiedby, 0) modifiedby, ");
+            _sql.Append("datemodified ");
+            _sql.Append("FROM categorydata ");
+            _sql.Append($"WHERE createdby = {userId} ");
+            _sql.Append("AND COALESCE(inactive, 'false') <> 'true' ");
+            _sql.Append("AND COALESCE(deleted, 'false') <> 'true' ");
+            if (categoryId > 0)
+            {
+                _sql.Append($"AND id = {categoryId}");
+            }
+
+            return _sql.ToString();
         }
         #endregion
     }
