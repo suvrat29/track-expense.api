@@ -15,8 +15,8 @@ namespace track_expense.api.TableOps.Interfaces
         Task InactiveCategoryAsync(long categoryId, long userId);   //unused
         void DeleteCategory(long categoryId, long userId);
         Task DeleteCategoryAsync(long categoryId, long userId);
-        List<CategorydataVM> GetCategoryList(long userId);
-        Task<List<CategorydataVM>> GetCategoryListAsync(long userId);
+        List<CategorydataVM> GetCategoryList(long userId, bool withSubcategoryCount);
+        Task<List<CategorydataVM>> GetCategoryListAsync(long userId, bool withSubcategoryCount);
         CategorydataVM GetCategoryById(long categoryId, long userId);
         Task<CategorydataVM> GetCategoryByIdAsync(long categoryId, long userId);
     }

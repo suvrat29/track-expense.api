@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,7 +46,7 @@ namespace track_expense.api.TableOps.TableClasses
 
             if (category != null)
             {
-                category.name = categoryData.name;
+                category.name = string.IsNullOrWhiteSpace(categoryData.name) ? throw new ApplicationException("Category name cannot be blank") : categoryData.name;
                 category.type = categoryData.type == 0 ? CategoryDataEnum.TYPE_EXPENSE : categoryData.type == 1 ? CategoryDataEnum.TYPE_INCOME : throw new ApiErrorResponse("Unrecognized expense type");
                 category.icon = categoryData.icon;
                 category.description = categoryData.description;
@@ -69,7 +70,7 @@ namespace track_expense.api.TableOps.TableClasses
 
             if (category != null)
             {
-                category.name = categoryData.name;
+                category.name = string.IsNullOrWhiteSpace(categoryData.name) ? throw new ApplicationException("Category name cannot be blank") : categoryData.name;
                 category.type = categoryData.type == 0 ? CategoryDataEnum.TYPE_EXPENSE : categoryData.type == 1 ? CategoryDataEnum.TYPE_INCOME : throw new ApiErrorResponse("Unrecognized expense type");
                 category.icon = categoryData.icon;
                 category.description = categoryData.description;
@@ -175,14 +176,70 @@ namespace track_expense.api.TableOps.TableClasses
             return await _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, categoryId)).OrderBy(x => x.id).LastOrDefaultAsync();
         }
 
-        public List<CategorydataVM> GetCategoryList(long userId)
+        public List<CategorydataVM> GetCategoryList(long userId, bool withSubcategoryCount)
         {
-            return _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToList();
+            ConcurrentBag<CategorydataVM> listData = new ConcurrentBag<CategorydataVM>();
+            List<CategorydataVM> categories = new List<CategorydataVM>();
+            ConcurrentBag<long> categoryBag = new ConcurrentBag<long>();
+
+            categories = _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToList();
+
+            if (withSubcategoryCount)
+            {
+                Parallel.ForEach(categories, category => { categoryBag.Add(category.id); });
+
+                List<SubcategoryCountVM> subcategoryCountList = _dbcontext.getDataFromQueryAsList<SubcategoryCountVM>(GetSubcategoryCountSQL(categoryBag.ToList()));
+
+                if (subcategoryCountList != null && subcategoryCountList.Count > 0)
+                {
+                    Parallel.ForEach(categories, category =>
+                    {
+                        SubcategoryCountVM subCategoryData = subcategoryCountList.Where(x => x.categoryId == category.id).FirstOrDefault();
+
+                        if (subCategoryData != null)
+                        {
+                            category.subcategorycount = subCategoryData.subcategoryCount;
+                        }
+
+                        listData.Add(category);
+                    });
+                }
+            }
+
+            return listData.ToList();
         }
 
-        public async Task<List<CategorydataVM>> GetCategoryListAsync(long userId)
+        public async Task<List<CategorydataVM>> GetCategoryListAsync(long userId, bool withSubcategoryCount)
         {
-            return await _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToListAsync();
+            ConcurrentBag<CategorydataVM> listData = new ConcurrentBag<CategorydataVM>();
+            List<CategorydataVM> categories = new List<CategorydataVM>();
+            ConcurrentBag<long> categoryBag = new ConcurrentBag<long>();
+
+            categories = await _dbcontext.categorydata.FromSqlRaw(GetCategoryListSQL(userId, 0)).ToListAsync();
+
+            if (withSubcategoryCount)
+            {
+                Parallel.ForEach(categories, category => { categoryBag.Add(category.id); });
+
+                List<SubcategoryCountVM> subcategoryCountList = await _dbcontext.getDataFromQueryAsListAsync<SubcategoryCountVM>(GetSubcategoryCountSQL(categoryBag.ToList()));
+
+                if (subcategoryCountList != null && subcategoryCountList.Count > 0)
+                {
+                    Parallel.ForEach(categories, category =>
+                    {
+                        SubcategoryCountVM subCategoryData = subcategoryCountList.Where(x => x.categoryId == category.id).FirstOrDefault();
+
+                        if (subCategoryData != null)
+                        {
+                            category.subcategorycount = subCategoryData.subcategoryCount;
+                        }
+
+                        listData.Add(category);
+                    });
+                }
+            }
+
+            return listData.ToList();
         }
         #endregion
 
@@ -213,6 +270,26 @@ namespace track_expense.api.TableOps.TableClasses
 
             return _sql.ToString();
         }
+
+        private string GetSubcategoryCountSQL(List<long> categoryIds)
+        {
+            StringBuilder _sql = new StringBuilder();
+            string listStr = "";
+            _sql.Append("SELECT COUNT(id) subcategoryCount, ");
+            _sql.Append("categoryid categoryId ");
+            _sql.Append("FROM subcategorydata ");
+            _sql.Append("WHERE categoryid IN ( ");
+            foreach (long id in categoryIds)
+            {
+                listStr += id.ToString() + ", ";
+            }
+            _sql.Append($"{listStr.Substring(0, listStr.Length - 2)}");
+            _sql.Append(") ");
+            _sql.Append("GROUP BY (categoryid)");
+
+            return _sql.ToString();
+        }
+
         #endregion
     }
 }

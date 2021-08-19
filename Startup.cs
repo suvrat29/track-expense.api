@@ -69,6 +69,7 @@ namespace track_expense.api
             services.AddScoped<ILocalesProvider, LocalesProvider>();
             services.AddScoped<IEmaildataProvider, EmaildataProvider>();
             services.AddScoped<ICategorydataProvider, CategorydataProvider>();
+            services.AddScoped<ISubcategorydataProvider, SubcategorydataProvider>();
             //Add service interfaces here
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMemCacheService, MemCacheService>();

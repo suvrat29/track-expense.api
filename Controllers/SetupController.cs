@@ -36,15 +36,36 @@ namespace track_expense.api.Controllers
 
         #region GET Methods
         [HttpGet("get-all-categories")]
-        public async Task<ActionResult> GetAllCategoriesAsync()
+        public async Task<IActionResult> GetAllCategoriesAsync([FromQuery] bool fetchSubcategoryCount)
         {
             try
             {
-                return Ok(await _setupService.getAllCategoriesAsync(base._userName));
+                if (fetchSubcategoryCount)
+                {
+                    return Ok(await _setupService.getAllCategoriesWithSubcategoriesAsync(base._userName));
+                }
+                else
+                {
+                    return Ok(await _setupService.getAllCategoriesNoSubcategoryAsync(base._userName));
+                }
             }
             catch (Exception ex)
             {
                 await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "GetAllCategoriesAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
+
+        [HttpGet("get-all-subcategories")]
+        public async Task<IActionResult> GetAllSubcategoriesByCategoryAsync([FromQuery] long categoryId)
+        {
+            try
+            {
+                return Ok(await _setupService.getAllSubcategoriesByCategoryAsync(categoryId, base._userName));
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "GetAllSubcategoriesByCategoryAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
                 throw;
             }
         }
@@ -89,6 +110,48 @@ namespace track_expense.api.Controllers
             catch (Exception ex)
             {
                 await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "DeleteCategoryAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
+
+        [HttpPost("add-new-subcategory")]
+        public async Task<IActionResult> AddNewSubcategoryAsync(AddNewSubcategoryVM newSubcategoryData)
+        {
+            try
+            {
+                return Ok(await _setupService.addNewSubcategoryAsync(newSubcategoryData, base._userName));
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "AddNewSubcategoryAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
+
+        [HttpPost("update-subcategory")]
+        public async Task<IActionResult> UpdateSubcategoryAsync(UpdateSubcategoryVM subcategoryData)
+        {
+            try
+            {
+                return Ok(await _setupService.updateSubcategoryDetailsAsync(subcategoryData, base._userName));
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "UpdateSubcategoryAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                throw;
+            }
+        }
+
+        [HttpPost("delete-subcategory")]
+        public async Task<IActionResult> DeleteSubcategoryAsync(long subcategoryId)
+        {
+            try
+            {
+                return Ok(await _setupService.deleteSubcategoryAsync(subcategoryId, base._userName));
+            }
+            catch (Exception ex)
+            {
+                await _applogService.addErrorLogAsync(ex, "Exception", "SetupController.cs", "DeleteSubcategoryAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
                 throw;
             }
         }
