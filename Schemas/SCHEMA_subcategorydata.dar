@@ -1,0 +1,27 @@
+CREATE TABLE IF NOT EXISTS public.subcategorydata
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    categoryid bigint NOT NULL,
+    name character varying NOT NULL,
+    icon character varying DEFAULT '',
+    inactive boolean DEFAULT false,
+    deleted boolean DEFAULT false,
+    createdby bigint NOT NULL,
+    datecreated timestamp without time zone NOT NULL,
+    modifiedby bigint,
+    datemodified timestamp without time zone,
+    CONSTRAINT "PK_subcategorydata" PRIMARY KEY (id),
+    CONSTRAINT "FK_subcategorydata_categorydata" FOREIGN KEY (categoryid)
+        REFERENCES public.categorydata (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT "FK_subcategorydata_logindata" FOREIGN KEY (createdby)
+        REFERENCES public.logindata (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+ALTER TABLE public.subcategorydata
+    OWNER to postgres;
