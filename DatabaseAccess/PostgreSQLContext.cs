@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace track_expense.api.DatabaseAccess
     public class PostgreSQLContext : DbContext
     {
         #region Variables
-        private readonly IConfiguration _configuration;
+        private string _connectionString = "";
         #endregion
 
         #region TableProperties
@@ -25,9 +24,19 @@ namespace track_expense.api.DatabaseAccess
         #endregion
 
         #region Constructor
-        public PostgreSQLContext(IConfiguration configuration, DbContextOptions<PostgreSQLContext> options) : base(options)
+        public PostgreSQLContext(DbContextOptions<PostgreSQLContext> options) : base(options)
         {
-            _configuration = configuration;
+            //Build connectionstring for heroku postgres
+            string connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            // parse the connection string
+            var databaseUri = new Uri(connectionUrl);
+
+            string db = databaseUri.LocalPath.TrimStart('/');
+            string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            /////////////////////////////////////////////////
+            ///
+            _connectionString = $"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};Port={databaseUri.Port};Database={db};Pooling=true;SSL Mode=Require;Trust Server Certificate=True;";
         }
         #endregion
 
@@ -57,7 +66,7 @@ namespace track_expense.api.DatabaseAccess
             T queryResult = new T();
 
             // Connect to the database
-            using (NpgsqlConnection conn = new NpgsqlConnection(_configuration["ConnectionString"]))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
 
@@ -110,7 +119,7 @@ namespace track_expense.api.DatabaseAccess
             List<T> queryResult = new List<T>();
 
             // Connect to the database
-            using (NpgsqlConnection conn = new NpgsqlConnection(_configuration["ConnectionString"]))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
 
@@ -163,7 +172,7 @@ namespace track_expense.api.DatabaseAccess
             T queryResult = new T();
 
             // Connect to the database
-            using (NpgsqlConnection conn = new NpgsqlConnection(_configuration["ConnectionString"]))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
 
@@ -216,7 +225,7 @@ namespace track_expense.api.DatabaseAccess
             List<T> queryResult = new List<T>();
 
             // Connect to the database
-            using (NpgsqlConnection conn = new NpgsqlConnection(_configuration["ConnectionString"]))
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
 
