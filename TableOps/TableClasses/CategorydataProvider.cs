@@ -203,9 +203,13 @@ namespace track_expense.api.TableOps.TableClasses
 
                         listData.Add(category);
                     });
-                }
 
-                return listData.ToList();
+                    return listData.ToList();
+                }
+                else
+                {
+                    return categories;
+                }
             }
             else
             {
@@ -240,9 +244,13 @@ namespace track_expense.api.TableOps.TableClasses
 
                         listData.Add(category);
                     });
-                }
 
-                return listData.ToList();
+                    return listData.ToList();
+                }
+                else
+                {
+                    return categories;
+                }
             }
             else
             {
