@@ -204,9 +204,13 @@ namespace track_expense.api.TableOps.TableClasses
                         listData.Add(category);
                     });
                 }
-            }
 
-            return listData.ToList();
+                return listData.ToList();
+            }
+            else
+            {
+                return categories;
+            }
         }
 
         public async Task<List<CategorydataVM>> GetCategoryListAsync(long userId, bool withSubcategoryCount)
@@ -237,9 +241,13 @@ namespace track_expense.api.TableOps.TableClasses
                         listData.Add(category);
                     });
                 }
-            }
 
-            return listData.ToList();
+                return listData.ToList();
+            }
+            else
+            {
+                return categories;
+            }
         }
         #endregion
 
