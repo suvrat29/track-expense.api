@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS public.useractivitylog
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    activitytype int NOT NULL,
+    actiontype int NOT NULL,
+    userid bigint NOT NULL,
+    actiondate timestamp without time zone NOT NULL,
+    actionfield1 character varying DEFAULT '',
+    actionfield2 character varying DEFAULT '',
+    CONSTRAINT "PK_useractivitylog" PRIMARY KEY (id),
+    CONSTRAINT "FK_logindata_useractivitylog" FOREIGN KEY (userid)
+        REFERENCES public.logindata (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+ALTER TABLE public.useractivitylog
+    OWNER to postgres;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hangfire;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,6 +92,8 @@ namespace track_expense.api.Services.ServiceClasses
 
                 await _categoryProvider.CreateNewCategoryAsync(_newCategory);
 
+                BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Category, ActivityActionTypeEnum.Create, username, _newCategory.name, ""));
+
                 return true;
             }
             catch (Exception ex)
@@ -106,6 +109,9 @@ namespace track_expense.api.Services.ServiceClasses
             {
                 if (await _categoryProvider.UpdateCategoryDetailsAsync(categoryData, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id))
                 {
+                    //TODO: Find updated fields
+                    BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Category, ActivityActionTypeEnum.Modify, username, "", ""));
+
                     return true;
                 }
                 else
@@ -124,7 +130,10 @@ namespace track_expense.api.Services.ServiceClasses
         {
             try
             {
+                //TODO: Find category name that was deleted
                 await _categoryProvider.DeleteCategoryAsync(categoryId, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id);
+
+                BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Category, ActivityActionTypeEnum.Delete, username, "", ""));
 
                 return true;
             }
@@ -149,6 +158,8 @@ namespace track_expense.api.Services.ServiceClasses
 
                 await _subcategoryProvider.CreateNewSubcategoryAsync(_newSubcategory);
 
+                BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Subcategory, ActivityActionTypeEnum.Create, username, _newSubcategory.name, ""));
+
                 return true;
             }
             catch (Exception ex)
@@ -164,6 +175,9 @@ namespace track_expense.api.Services.ServiceClasses
             {
                 if (await _subcategoryProvider.UpdateSubcategoryDetailsAsync(subcategoryData, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id))
                 {
+                    //TODO: Find updated fields
+                    BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Subcategory, ActivityActionTypeEnum.Modify, username, "", ""));
+
                     return true;
                 }
                 else
@@ -182,7 +196,10 @@ namespace track_expense.api.Services.ServiceClasses
         {
             try
             {
+                //TODO: Find subcategory name that was deleted
                 await _subcategoryProvider.DeleteSubcategoryAsync(subcategoryId, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id);
+
+                BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Subcategory, ActivityActionTypeEnum.Delete, username, "", ""));
 
                 return true;
             }
