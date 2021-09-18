@@ -45,7 +45,7 @@ namespace track_expense.api
             services.AddHangfire(config => config.UsePostgreSqlStorage($"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};Port={databaseUri.Port};Database={db};Pooling=true;SSL Mode=Require;Trust Server Certificate=True;"));
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer();
+            services.AddHangfireServer(config => config.WorkerCount = 2);
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
@@ -108,8 +108,6 @@ namespace track_expense.api
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints =>
             {
