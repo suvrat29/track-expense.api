@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hangfire;
+using System;
 using System.Threading.Tasks;
 using track_expense.api.Enums;
 using track_expense.api.Services.Interfaces;
@@ -64,6 +65,9 @@ namespace track_expense.api.Services.ServiceClasses
             {
                 if (await _userModel.UpdateUserProfileAsync(profileData, _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id))
                 {
+                    //TODO: Find updated fields
+                    BackgroundJob.Enqueue<IUseractivitylogService>(activity => activity.addUserActivityAsync(ActivityTypeEnum.Profile, ActivityActionTypeEnum.Modify, username, "", ""));
+
                     UserModelVM _user = await _userModel.GetUserAccountByEmailAsync(username);
 
                     if (_user != null)

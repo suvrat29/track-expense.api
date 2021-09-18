@@ -22,6 +22,7 @@ namespace track_expense.api.DatabaseAccess
         public DbSet<EmaildataVM> emaildata { get; set; }
         public DbSet<CategorydataVM> categorydata { get; set; }
         public DbSet<SubcategorydataVM> subcategorydata { get; set; }
+        public DbSet<UseractivitylogVM> useractivitylog { get; set; }
         #endregion
 
         #region Constructor
