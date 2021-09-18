@@ -13,6 +13,8 @@ using track_expense.api.TableOps.TableClasses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Hangfire;
+using Hangfire.PostgreSql;
 
 namespace track_expense.api
 {
@@ -28,6 +30,12 @@ namespace track_expense.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Hangfire service
+            services.AddHangfire(config => config.UsePostgreSqlStorage(Configuration["ConnectionString"]));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             //enable in-memory cache
@@ -60,6 +68,7 @@ namespace track_expense.api
             services.AddScoped<IEmaildataProvider, EmaildataProvider>();
             services.AddScoped<ICategorydataProvider, CategorydataProvider>();
             services.AddScoped<ISubcategorydataProvider, SubcategorydataProvider>();
+            services.AddScoped<IUseractivitylogProvider, UseractivitylogProvider>();
             //Add service interfaces here
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMemCacheService, MemCacheService>();
@@ -67,6 +76,7 @@ namespace track_expense.api
             services.AddScoped<IApplogService, ApplogService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<ISetupService, SetupService>();
+            services.AddScoped<IUseractivitylogService, UseractivitylogService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,6 +98,8 @@ namespace track_expense.api
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints =>
             {
