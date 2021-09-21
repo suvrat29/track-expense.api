@@ -16,7 +16,6 @@ namespace track_expense.api.Controllers
     public class SetupController : BaseController
     {
         #region Variables
-        private readonly IHttpContextAccessor _context;
         private readonly ISetupService _setupService;
         private readonly IApplogService _applogService;
         private readonly IMemCacheService _memCacheService;
@@ -25,7 +24,6 @@ namespace track_expense.api.Controllers
         #region Constructor
         public SetupController(IHttpContextAccessor context, ISetupService setupService, IApplogService applogService, IMemCacheService memCacheService) : base(context)
         {
-            _context = context;
             _setupService = setupService;
             _applogService = applogService;
             _memCacheService = memCacheService;

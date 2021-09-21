@@ -67,17 +67,17 @@ namespace track_expense.api.Services.ServiceClasses
             }
         }
 
-        public async Task<List<UseractivitylogVM>> getUseractivityAsync(string username)
+        public async Task<List<UseractivitylogVM>> getUserActivityAsync(string username)
         {
             try
             {
-                List<UseractivitylogVM> _activityData = await _activityLog.getUseractivityAsync(_memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id);
+                List<UseractivitylogVM> _activityLogData = await _activityLog.getUseractivityAsync(_memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE).id);
 
-                return _activityData.OrderByDescending(activity => activity.actiondate).ToList();
+                return _activityLogData.OrderByDescending(x => x.id).ToList();
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "UseractivitylogService.cs", "getUseractivityAsync()", _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE));
+                await _applogService.addErrorLogAsync(ex, "Exception", "UseractivitylogService.cs", "getUserActivityAsync()", _memCacheService.GetValueFromCache<UserModelVM>(username, CacheKeyConstants.USER_CACHE_STORE));
                 throw;
             }
         }
