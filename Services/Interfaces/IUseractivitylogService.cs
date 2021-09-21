@@ -9,6 +9,6 @@ namespace track_expense.api.Services.Interfaces
     {
         Task addUserActivityAsync(ActivityTypeEnum activityType, ActivityActionTypeEnum actionType, string username, string action1, string action2);
         void addUserActivity(ActivityTypeEnum activityType, ActivityActionTypeEnum actionType, string username, string action1, string action2);
-        Task<List<UseractivitylogVM>> getUseractivityAsync(string username);
+        Task<List<UseractivitylogVM>> getUserActivityAsync(string username);
     }
 }
