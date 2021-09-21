@@ -16,7 +16,6 @@ namespace track_expense.api.Controllers
     public class UserProfileController : BaseController
     {
         #region Variables
-        private readonly IHttpContextAccessor _context;
         private readonly IApplogService _applogService;
         private readonly IUserProfileService _userProfileService;
         private readonly IMemCacheService _memCacheService;
@@ -26,7 +25,6 @@ namespace track_expense.api.Controllers
         public UserProfileController(IApplogService applogService, IHttpContextAccessor context, IUserProfileService userProfileService, IMemCacheService memCacheService) : base(context)
         {
             _applogService = applogService;
-            _context = context;
             _userProfileService = userProfileService;
             _memCacheService = memCacheService;
         }

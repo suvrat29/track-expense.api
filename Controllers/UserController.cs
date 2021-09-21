@@ -131,7 +131,7 @@ namespace track_expense.api.Controllers
         }
 
         [HttpPost("logout")]
-        public async Task<IActionResult> LogoutUser(string email)
+        public async Task<IActionResult> LogoutUserAsync(string email)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace track_expense.api.Controllers
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "UserController.cs", "LogoutUser()");
+                await _applogService.addErrorLogAsync(ex, "Exception", "UserController.cs", "LogoutUserAsync()");
                 throw;
             }
         }

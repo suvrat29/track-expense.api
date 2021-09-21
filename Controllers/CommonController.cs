@@ -16,7 +16,6 @@ namespace track_expense.api.Controllers
     public class CommonController : BaseController
     {
         #region Variables
-        private readonly IHttpContextAccessor _context;
         private readonly IApplogService _applogService;
         private readonly IMemCacheService _memCacheService;
         #endregion
@@ -26,7 +25,6 @@ namespace track_expense.api.Controllers
         {
             _applogService = applogService;
             _memCacheService = memCacheService;
-            _context = context;
         }
         #endregion
 
@@ -34,7 +32,7 @@ namespace track_expense.api.Controllers
 
         #region GET Methods
         [HttpGet("data")]
-        public async Task<IActionResult> getLoggedInUserDetails()
+        public async Task<IActionResult> GetLoggedInUserDetailsAsync()
         {
             try
             {
@@ -42,7 +40,7 @@ namespace track_expense.api.Controllers
             }
             catch (Exception ex)
             {
-                await _applogService.addErrorLogAsync(ex, "Exception", "CommonController.cs", "getLoggedInUserDetails()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
+                await _applogService.addErrorLogAsync(ex, "Exception", "CommonController.cs", "GetLoggedInUserDetailsAsync()", _memCacheService.GetValueFromCache<UserModelVM>(base._userName, CacheKeyConstants.USER_CACHE_STORE));
                 throw;
             }
         }
